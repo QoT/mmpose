@@ -4,8 +4,8 @@ from collections import OrderedDict, defaultdict
 
 import json_tricks as json
 import numpy as np
-from crowdposetools.coco import COCO
-from crowdposetools.cocoeval import COCOeval
+from xtcocotools.coco import COCO
+from xtcocotools.cocoeval import COCOeval
 
 from ....core.post_processing import (candidate_reselect, convert_crowd,
                                       oks_nms, soft_oks_nms)
@@ -417,7 +417,8 @@ class TopDownCrowdPoseDataset(TopDownBaseDataset):
     def _do_python_keypoint_eval(self, res_file):
         """Keypoint evaluation using CrowdPoseAPI."""
         coco_dt = self.coco.loadRes(res_file)
-        coco_eval = COCOeval(self.coco, coco_dt, 'keypoints')
+        coco_eval = COCOeval(
+            self.coco, coco_dt, 'keypoints_crowd', self.sigmas, use_area=False)
         coco_eval.params.useSegm = None
         coco_eval.evaluate()
         coco_eval.accumulate()
